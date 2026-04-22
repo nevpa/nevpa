@@ -29,11 +29,10 @@
         .brand-title-3d span { display: block; font-size: 14px; color: var(--accent); text-transform: none; font-weight: 600; margin-bottom: 5px; -webkit-text-fill-color: var(--accent);}
         .model-area { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1;}
 
-        /* --- BAĞIMSIZ AR BUTONU (BAŞLIĞIN ALTINA SABİTLENDİ) --- */
+        /* --- AR BUTONU --- */
         .ar-button-force { 
             background-color: var(--accent); color: #000; border: none; 
-            margin-top: 15px; /* Başlıkla arasındaki mesafe */
-            padding: 10px 24px; border-radius: 30px; font-weight: 800; cursor: pointer; 
+            margin-top: 15px; padding: 10px 24px; border-radius: 30px; font-weight: 800; cursor: pointer; 
             box-shadow: 0 4px 15px rgba(255,204,0,0.3); display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; z-index: 9999; position: relative;
             transition: 0.3s;
         }
@@ -51,19 +50,14 @@
         /* --- MOBİL UYUMLULUK --- */
         @media (max-width: 768px) {
             body { flex-direction: column; }
-            .sidebar-left, .sidebar-right { 
-                width: 100%; height: auto; padding: 10px; border: none; 
-                flex-direction: row; overflow-x: auto; white-space: nowrap; 
-            }
+            .sidebar-left, .sidebar-right { width: 100%; height: auto; padding: 10px; border: none; flex-direction: row; overflow-x: auto; white-space: nowrap; }
             .sidebar-left { order: 1; border-bottom: 1px solid rgba(139, 148, 158, 0.2); }
             .sidebar-right { order: 3; position: fixed; bottom: 0; border-top: 1px solid var(--accent); background: #0d1117; z-index: 100; }
             .main-area { order: 2; height: 65vh; width: 100%; }
             .logo-container, .action-group-title, .panel-header { display: none; }
             .action-group { margin-bottom: 0; display: flex; gap: 8px; }
             .action-btn, .module-btn { width: auto; margin-bottom: 0; margin-right: 5px; flex-shrink: 0; padding: 10px 15px; }
-            
             .brand-title-3d { font-size: 20px; margin-top: 15px; padding-bottom: 5px;}
-            /* Mobilde butonun boyutunu biraz daha kibarlaştırdık */
             .ar-button-force { margin-top: 10px; font-size: 13px; padding: 8px 20px; }
         }
 
@@ -93,10 +87,7 @@
 
     <div class="main-area">
         <div class="brand-title-3d"><span>YENİ NESİL MODÜLER SİSTEM</span>DİNAMİK KONFİGÜRATÖR</div>
-        
-        <button id="forceArBtn" class="ar-button-force">
-            📱 KASAYI ORTAMA YERLEŞTİR
-        </button>
+        <button id="forceArBtn" class="ar-button-force">📱 KASAYI ORTAMA YERLEŞTİR</button>
 
         <div class="model-area">
             <model-viewer 
@@ -116,10 +107,14 @@
 
     <div class="sidebar-right">
         <div class="panel-header"><div class="panel-title">MODÜLER BİLEŞENLER</div></div>
-        <button class="module-btn show-all-btn active" id="showAllBtn">ANA KASA (TÜMÜ) <span class="status-indicator"></span></button>
-        <button class="module-btn" data-model="kros.glb">Kros Grubu <span class="status-indicator"></span></button>
+        
+        <button class="module-btn show-all-btn active" id="showAllBtn">ANA GÖRSEL (TÜMÜ) <span class="status-indicator"></span></button>
+        
+        <button class="module-btn" data-model="alt_televre.glb">Alt Televre <span class="status-indicator"></span></button>
+        <button class="module-btn" data-model="on_panel.glb">Ön Panel <span class="status-indicator"></span></button>
         <button class="module-btn" data-model="yan_kapak.glb">Yan Kapaklar <span class="status-indicator"></span></button>
         <button class="module-btn" data-model="arka_kapak.glb">Arka Kapak <span class="status-indicator"></span></button>
+        <button class="module-btn" data-model="dikmeler.glb">Dikmeler <span class="status-indicator"></span></button>
     </div>
 
     <div id="videoModal" class="modal">
@@ -139,12 +134,10 @@
     </div>
 
     <script>
-        // Modal İşlemleri
         function openModal(id) { document.getElementById(id).style.display = "block"; }
         function closeModal(id) { document.getElementById(id).style.display = "none"; }
         window.onclick = function(e) { if(e.target.className==='modal') e.target.style.display="none"; }
 
-        // Parça Değiştirme Sistemi
         const moduleBtns = document.querySelectorAll('.module-btn');
         const modelViewer = document.getElementById('jms-viewer');
 
@@ -161,7 +154,6 @@
             });
         });
 
-        // Bağımsız AR Butonunu Motora Bağlama
         const forceArBtn = document.getElementById('forceArBtn');
         forceArBtn.addEventListener('click', () => {
             modelViewer.activateAR();
