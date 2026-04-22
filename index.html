@@ -29,6 +29,16 @@
         .brand-title-3d span { display: block; font-size: 14px; color: var(--accent); text-transform: none; font-weight: 600; margin-bottom: 5px; -webkit-text-fill-color: var(--accent);}
         .model-area { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1;}
 
+        /* --- BAĞIMSIZ AR BUTONU (BAŞLIĞIN ALTINA SABİTLENDİ) --- */
+        .ar-button-force { 
+            background-color: var(--accent); color: #000; border: none; 
+            margin-top: 15px; /* Başlıkla arasındaki mesafe */
+            padding: 10px 24px; border-radius: 30px; font-weight: 800; cursor: pointer; 
+            box-shadow: 0 4px 15px rgba(255,204,0,0.3); display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; z-index: 9999; position: relative;
+            transition: 0.3s;
+        }
+        .ar-button-force:hover { background-color: #fff; color: var(--accent); transform: scale(1.05);}
+
         /* --- SAĞ MENÜ --- */
         .sidebar-right { width: 280px; background: var(--sidebar-bg); backdrop-filter: blur(10px); padding: 30px 20px; display: flex; flex-direction: column; border-left: 1px solid rgba(139, 148, 158, 0.1); z-index: 10; box-shadow: -5px 0 15px rgba(0,0,0,0.5); overflow-y: auto;}
         .panel-header { display: flex; align-items: center; margin-bottom: 20px; border-bottom: 1px solid rgba(139, 148, 158, 0.2); padding-bottom: 10px;}
@@ -37,9 +47,6 @@
         .status-indicator { width: 8px; height: 8px; border-radius: 50%; background-color: #484f58; margin-left: auto;}
         .active .status-indicator { background-color: var(--accent); box-shadow: 0 0 8px var(--accent);}
         .show-all-btn { border: 1px dashed rgba(139, 148, 158, 0.5); margin-bottom: 20px !important; }
-
-        /* --- AR BUTONU TASARIMI --- */
-        .ar-button { background-color: var(--accent); color: #000; border: none; position: absolute; bottom: 30px; right: 30px; padding: 12px 20px; border-radius: 8px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(255,204,0,0.4); display: flex; align-items: center; gap: 8px; font-size: 14px; z-index: 999; }
 
         /* --- MOBİL UYUMLULUK --- */
         @media (max-width: 768px) {
@@ -54,14 +61,14 @@
             .logo-container, .action-group-title, .panel-header { display: none; }
             .action-group { margin-bottom: 0; display: flex; gap: 8px; }
             .action-btn, .module-btn { width: auto; margin-bottom: 0; margin-right: 5px; flex-shrink: 0; padding: 10px 15px; }
-            .brand-title-3d { font-size: 20px; margin-top: 15px; }
             
-            /* İŞTE ÇÖZÜM BURADA: Buton mobilde alt menünün hemen üstüne tam ortaya alındı */
-            .ar-button { top: unset; bottom: 85px; right: unset; left: 50%; transform: translateX(-50%); font-size: 15px; padding: 14px 28px; border-radius: 30px; }
+            .brand-title-3d { font-size: 20px; margin-top: 15px; padding-bottom: 5px;}
+            /* Mobilde butonun boyutunu biraz daha kibarlaştırdık */
+            .ar-button-force { margin-top: 10px; font-size: 13px; padding: 8px 20px; }
         }
 
         /* --- MODALLAR --- */
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(5px); }
+        .modal { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(5px); }
         .modal-content { background: #161b22; margin: 5% auto; padding: 25px; border: 1px solid var(--accent); width: 70%; border-radius: 12px; position: relative; }
         .close-modal { color: #8b949e; position: absolute; top: 15px; right: 20px; font-size: 30px; cursor: pointer; }
         iframe { width: 100%; height: 400px; border: none; border-radius: 8px; }
@@ -86,8 +93,14 @@
 
     <div class="main-area">
         <div class="brand-title-3d"><span>YENİ NESİL MODÜLER SİSTEM</span>DİNAMİK KONFİGÜRATÖR</div>
+        
+        <button id="forceArBtn" class="ar-button-force">
+            📱 KASAYI ORTAMA YERLEŞTİR
+        </button>
+
         <div class="model-area">
             <model-viewer 
+                id="jms-viewer"
                 src="televre.glb" 
                 auto-rotate 
                 camera-controls 
@@ -97,10 +110,6 @@
                 ar 
                 ar-modes="webxr scene-viewer quick-look"
                 style="width: 100%; height: 100%; outline: none;">
-                
-                <button slot="ar-button" class="ar-button">
-                    📱 Ortama Yerleştir
-                </button>
             </model-viewer>
         </div>
     </div>
@@ -130,12 +139,14 @@
     </div>
 
     <script>
+        // Modal İşlemleri
         function openModal(id) { document.getElementById(id).style.display = "block"; }
         function closeModal(id) { document.getElementById(id).style.display = "none"; }
         window.onclick = function(e) { if(e.target.className==='modal') e.target.style.display="none"; }
 
+        // Parça Değiştirme Sistemi
         const moduleBtns = document.querySelectorAll('.module-btn');
-        const modelViewer = document.querySelector('model-viewer');
+        const modelViewer = document.getElementById('jms-viewer');
 
         moduleBtns.forEach(btn => {
             btn.addEventListener('click', function() {
@@ -148,6 +159,12 @@
                     if(modelName) { modelViewer.src = modelName; }
                 }
             });
+        });
+
+        // Bağımsız AR Butonunu Motora Bağlama
+        const forceArBtn = document.getElementById('forceArBtn');
+        forceArBtn.addEventListener('click', () => {
+            modelViewer.activateAR();
         });
     </script>
 </body>
